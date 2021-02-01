@@ -1,167 +1,100 @@
-05.04.2020 (sun): Release 0.0.8
+01.02.2020 (mon): Release 0.0.1
 -------------------------------
 Added functions:
-- mdz_vector_clear
+- mdz_unicode_init
+- mdz_unicode_init_attached
+- mdz_unicode_uninit
 
-- mdz_ascii_clear
-
+- mdz_wchar_create
+- mdz_wchar_create_attached
+- mdz_wchar_destroy
 - mdz_wchar_clear
-- mdz_wchar_attach
-- mdz_wchar_insertAndReserve
-- mdz_wchar_insertAndReserveBytes
-- mdz_wchar_insertAndReserveUtf8
-- mdz_wchar_insertUtf16
-- mdz_wchar_insertAndReserveUtf16
-- mdz_wchar_insertUtf32
-- mdz_wchar_insertAndReserveUtf32
-
-- mdz_utf8_clear
-- mdz_utf8_attach
-- mdz_utf8_insertBytes
-- mdz_utf8_insertAndReserveBytes
-- mdz_utf8_insertWchar
-- mdz_utf8_insertAndReserveWchar
-- mdz_utf8_insertAndReserveUtf16
-- mdz_utf8_insertUtf32
-- mdz_utf8_insertAndReserveUtf32
-
-- mdz_utf16_clear
-- mdz_utf16_attach
-- mdz_utf16_insertAndReserve
-- mdz_utf16_insertAndReserveBytes
-- mdz_utf16_insertWchar
-- mdz_utf16_insertAndReserveWchar
-- mdz_utf16_insertAndReserveUtf8
-- mdz_utf16_insertUtf32
-- mdz_utf16_insertAndReserveUtf32
-
-- mdz_utf32_create
-- mdz_utf32_destroy
-- mdz_utf32_clear
-- mdz_utf32_attach
-- mdz_utf32_reserve
-- mdz_utf32_capacity
-- mdz_utf32_insert
-- mdz_utf32_insertAndReserve
-- mdz_utf32_insertBytes
-- mdz_utf32_insertAndReserveBytes
-- mdz_utf32_insertWchar
-- mdz_utf32_insertAndReserveWchar
-- mdz_utf32_insertUtf8
-- mdz_utf32_insertAndReserveUtf8
-- mdz_utf32_insertUtf16
-- mdz_utf32_insertAndReserveUtf16
-
-17.03.2020 (tue): Release 0.0.7
--------------------------------
-- added libs for macOS
-- minor corrections/improvements
-
-16.03.2020 (mon): Release 0.0.6
--------------------------------
-Added functions:
-- mdz_wchar_create
-- mdz_wchar_destroy
+- mdz_wchar_attachData
 - mdz_wchar_reserve
 - mdz_wchar_capacity
-- mdz_wchar_insert
-- mdz_wchar_insertBytes
-- mdz_wchar_insertUtf8
-
-minor corrections/improvements
-
-12.03.2020 (thu): Release 0.0.5
--------------------------------
-Added functions:
-- mdz_utf16_create
-- mdz_utf16_destroy
-- mdz_utf16_reserve
-- mdz_utf16_capacity
-- mdz_utf16_endianness
-- mdz_utf16_insert
-- mdz_utf16_insertBytes
-- mdz_utf16_insertUtf8
-
-- removed "wchar" functions
-
-04.03.2020 (wed): Release 0.0.4
--------------------------------
-Added functions:
-- mdz_ascii_create
-- mdz_ascii_destroy
-- mdz_ascii_attach
-- mdz_ascii_reserve
-- mdz_ascii_reserveAndInit
-- mdz_ascii_capacity
-- mdz_ascii_insert
-- mdz_ascii_insertAndReserve
-- mdz_ascii_compare
-- mdz_ascii_find
-- mdz_ascii_findFirstItemOf
-- mdz_ascii_findFirstItemNotOf
-- mdz_ascii_rfind
-- mdz_ascii_findLastItemOf
-- mdz_ascii_findLastItemNotOf
-- mdz_ascii_removeFrom
-- mdz_ascii_remove
-- mdz_ascii_trimLeft
-- mdz_ascii_trimRight
-- mdz_ascii_trim
-- mdz_ascii_replace
-- mdz_ascii_count
-- mdz_ascii_copySubAscii
-- mdz_ascii_copySubAsciiFrom
-
-- mdz_wchar_create
-- mdz_wchar_destroy
-- mdz_wchar_reserve
-- mdz_wchar_capacity
-- mdz_wchar_insert
-- mdz_wchar_insertUtf8
-
-11.02.2020 (tue): Release 0.0.3
--------------------------------
-Added functions:
-- mdz_vector_attach
-- mdz_vector_copySubvector
-- mdz_vector_copySubvectorFrom
+- mdz_wchar_size
+- mdz_wchar_length
+- mdz_wchar_offsetFromStart
+- mdz_wchar_isAttachedData
+- mdz_wchar_embedSize
+- mdz_wchar_insertWchar_async
+- mdz_wchar_insertWchar_string_async
+- mdz_wchar_insertAnsi_async
+- mdz_wchar_insertAnsi_string_async
+- mdz_wchar_insertUtf8_async
+- mdz_wchar_insertUtf8_string_async
+- mdz_wchar_insertUtf16_async
+- mdz_wchar_insertUtf16_string_async
+- mdz_wchar_insertUtf32_async
+- mdz_wchar_insertUtf32_string_async
 
 - mdz_utf8_create
+- mdz_utf8_create_attached
 - mdz_utf8_destroy
+- mdz_utf8_clear
+- mdz_utf8_attachData
 - mdz_utf8_reserve
 - mdz_utf8_capacity
-- mdz_utf8_insert
-- mdz_utf8_insertAndReserve
-- mdz_utf8_insertUTF16
-- mdz_utf8_insertAndReserveUTF16
+- mdz_utf8_size
+- mdz_utf8_length
+- mdz_utf8_offsetFromStart
+- mdz_utf8_isAttachedData
+- mdz_utf8_embedSize
+- mdz_utf8_insertUtf8_async
+- mdz_utf8_insertUtf8_string_async
+- mdz_utf8_insertAnsi_async
+- mdz_utf8_insertAnsi_string_async
+- mdz_utf8_insertWchar_async
+- mdz_utf8_insertWchar_string_async
+- mdz_utf8_insertUtf16_async
+- mdz_utf8_insertUtf16_string_async
+- mdz_utf8_insertUtf32_async
+- mdz_utf8_insertUtf32_string_async
 
-- improved MdzVector "wrapper"
-- added MdzAscii "wrapper"
+- mdz_utf16_create
+- mdz_utf16_create_attached
+- mdz_utf16_destroy
+- mdz_utf16_clear
+- mdz_utf16_attachData
+- mdz_utf16_reserve
+- mdz_utf16_capacity
+- mdz_utf16_size
+- mdz_utf16_length
+- mdz_utf16_endianness
+- mdz_utf16_offsetFromStart
+- mdz_utf16_isAttachedData
+- mdz_utf16_embedSize
+- mdz_utf16_insertUtf16_async
+- mdz_utf16_insertUtf16_string_async
+- mdz_utf16_insertAnsi_async
+- mdz_utf16_insertAnsi_string_async
+- mdz_utf16_insertWchar_async
+- mdz_utf16_insertWchar_string_async
+- mdz_utf16_insertUtf8_async
+- mdz_utf16_insertUtf8_string_async
+- mdz_utf16_insertUtf32_async
+- mdz_utf16_insertUtf32_string_async
 
-30.01.2020 (mon): Release 0.0.2
--------------------------------
-Added functons:
-- mdz_vector_trimLeft
-- mdz_vector_trimRight
-- mdz_vector_trim
-- mdz_vector_replace
-- mdz_vector_count
-
-27.01.2020 (mon): Release 0.0.1
--------------------------------
-Added functions:
-- mdz_containers_init
-- mdz_vector_reserve
-- mdz_vector_reserveAndInit
-- mdz_vector_capacity
-- mdz_vector_insert
-- mdz_vector_insertAndReserve
-- mdz_vector_compare
-- mdz_vector_find
-- mdz_vector_findFirstItemOf
-- mdz_vector_findFirstItemNotOf
-- mdz_vector_rfind
-- mdz_vector_findLastItemOf
-- mdz_vector_findLastItemNotOf
-- mdz_vector_removeFrom
-- mdz_vector_remove
+- mdz_utf32_create
+- mdz_utf32_create_attached
+- mdz_utf32_destroy
+- mdz_utf32_clear
+- mdz_utf32_attachData
+- mdz_utf32_reserve
+- mdz_utf32_capacity
+- mdz_utf32_size
+- mdz_utf32_length
+- mdz_utf32_endianness
+- mdz_utf32_offsetFromStart
+- mdz_utf32_isAttachedData
+- mdz_utf32_embedSize
+- mdz_utf32_insertUtf32_async
+- mdz_utf32_insertUtf32_string_async
+- mdz_utf32_insertAnsi_async
+- mdz_utf32_insertAnsi_string_async
+- mdz_utf32_insertWchar_async
+- mdz_utf32_insertWchar_string_async
+- mdz_utf32_insertUtf8_async
+- mdz_utf32_insertUtf8_string_async
+- mdz_utf32_insertUtf16_async
+- mdz_utf32_insertUtf16_string_async
