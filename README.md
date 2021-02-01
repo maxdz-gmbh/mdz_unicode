@@ -3,6 +3,7 @@
 ## Table of Contents
 [mdz_unicode Overview](#mdz_unicode-Overview)<br>
 [mdz_unicode Advantages](#mdz_unicode-Advantages)<br>
+[mdz_unicode Usage](#mdz_unicode-Usage)<br>
 [mdz_wchar Overview](#mdz_wchar-Overview)<br>
 [mdz_utf8 Overview](#mdz_utf8-Overview)<br>
 [mdz_utf16 Overview](#mdz_utf16-Overview)<br>
@@ -11,6 +12,13 @@
 [Credits](#Credits)
 
 ## mdz_unicode Overview
+
+Wiki: [mdz_unicode Wiki]<br>
+file: *"mdz_unicode.h"*
+
+Please take a look at *"mdz_unicode.h"* file or [mdz_unicode Wiki] site for detailed functions descriptions.
+
+[mdz_unicode Wiki]: https://github.com/maxdz-gmbh/mdz_unicode/wiki/mdz_unicode-overview
 
 [mdz_unicode] - is a very lightweight, versatile and speedy C  library for handling Unicode strings, developed by [maxdz Software GmbH].The library supports UTF8, UTF16, UTF32, wchar strings. Source code of library is highly-portable, conforms to ANSI C 89/90 Standard. Builds for Win32/Win64, Linux, FreeBSD, Android, macOS are available.
 
@@ -53,21 +61,21 @@ Only shared/dynamically loaded libraries (*.so* and *.dll* files with import lib
 
 **10. Asynchronous execution:** *insert* functions can be executed asynchronously
 
-## mdz_unicode Overview
-Wiki: [mdz_unicode Wiki]<br>
-file: *"mdz_unicode.h"*
-
-Please take a look at *"mdz_unicode.h"* file or [mdz_unicode Wiki] site for detailed functions descriptions.
-
-[mdz_unicode Wiki]: https://github.com/maxdz-gmbh/mdz_unicode/wiki/mdz_unicode-overview
+## mdz_unicode Usage
 
 **unicode** is implemented with strict input parameters checking. It means *mdz_false* or some other error indication will be returned if one or several input parameters are invalid - even if such an invalidity doesn't lead to inconsistence (for example adding or removing 0 items).<br>
+
+**Test license generation:** - use [mdz_unicode Test License] page for generating test license. Using this license you are able to test *mdz_unicode* library during next 14 days.
+Test license data should be used in *mdz_unicode_init()* call for library initialization.
+
+**NOTE:** All 0.x releases are kind of "beta-versions" and can be used 1) only with test-license (during test period of 14 days, with necessity to re-generate license for the next 14 days test period) and 2) without expectations of interface backward-compatibility.
 
 Several usage-scenarios are possible:
 - low-level - raw C interface, using *mdz_unicode.h*, *mdz_utf8.h*, *mdz_utf16.h*, etc C-header files
 - higher-level - using *MdzUnicode*, *MdzUtf8*, *MdzUtf16*, etc C++ "wrappers" around C-header files functions
 
 [mdz_unicode Wiki]: https://github.com/maxdz-gmbh/mdz_unicode/wiki/mdz_unicode-overview
+[mdz_unicode Test License]: https://maxdz.com/mdz_unicode_testlicense.php
 
 #### Code Example (low-level use)
 
@@ -78,8 +86,15 @@ Several usage-scenarios are possible:
 
 int main(int argc, char* argv[])
 {
+  /* mdz_unicode library initialization using test info retrieved after license generation (see "Test license generation" above) */
+  
   mdz_bool bRet = mdz_unicode_init("<first-name-hash>", "<last-name-hash>", "<email-hash>", "<license-hash>");
   ...
+
+  mdz_ansi_uninit(); /* call for un-initialization of library */
+  
+  return 0;
+  
 }
 ```
 
@@ -108,6 +123,7 @@ int main(int argc, char* argv[])
   
   mdz_utf8_destroy(&pUtf8); // after this pUtf8 should be NULL
   
+  mdz_ansi_uninit();
   ...
 }
 ```
@@ -140,6 +156,7 @@ int main(int argc, char* argv[])
   
   mdz_utf8_destroy(&pUtf8);
   
+  mdz_ansi_uninit();
   ...
 }
 ```
