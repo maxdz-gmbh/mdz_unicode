@@ -65,7 +65,7 @@ Only shared/dynamically loaded libraries (*.so* and *.dll* files with import lib
 
 **unicode** is implemented with strict input parameters checking. It means *mdz_false* or some other error indication will be returned if one or several input parameters are invalid - even if such an invalidity doesn't lead to inconsistence (for example adding or removing 0 items).<br>
 
-**Test license generation:** - use [mdz_unicode Test License] page for generating test license. Using this license you are able to test *mdz_unicode* library during next 14 days.
+**Test license generation:** - in order to get free test-license, please proceed to our Shop page [maxdz Shop] and register an account. After registration you will be able to obtain free 14-days test-licenses for our products using "Obtain for free" button. 
 Test license data should be used in *mdz_unicode_init()* call for library initialization.
 
 **NOTE:** All 0.x releases are kind of "beta-versions" and can be used 1) only with test-license (during test period of 14 days, with necessity to re-generate license for the next 14 days test period) and 2) without expectations of interface backward-compatibility.
@@ -75,7 +75,7 @@ Several usage-scenarios are possible:
 - higher-level - using *MdzUnicode*, *MdzUtf8*, *MdzUtf16*, etc C++ "wrappers" around C-header files functions
 
 [mdz_unicode Wiki]: https://github.com/maxdz-gmbh/mdz_unicode/wiki/mdz_unicode-overview
-[mdz_unicode Test License]: https://maxdz.com/mdz_unicode_testlicense.php
+[maxdz Shop]: https://maxdz.com/shop.php
 
 #### Code Example (low-level use)
 
