@@ -200,8 +200,3 @@ Please take a look at *"mdz_utf32.h"* file or [mdz_utf32 Wiki] site for detailed
 Use of **mdz_unicode** library is regulated by license agreement in *LICENSE.txt*
 
 Basically private non-commercial "test" usage is unrestricted. Commercial usage of library (incl. its source code) will be regulated by according license agreement.
-
-## Credits
-[Maksym Dzyubenko] - library implementation, porting on platforms, participation in unit-tests and performance-tests<br>
-
-[Maksym Dzyubenko]: https://github.com/mdzyubenko
