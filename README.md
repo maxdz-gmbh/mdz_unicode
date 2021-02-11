@@ -41,9 +41,9 @@ Only shared/dynamically loaded libraries (*.so* and *.dll* files with import lib
 
 ## mdz_unicode Advantages
 
-**1. Very high portability:** the whole code conforms to ANSI C 89/90 Standard. Multithreading/asynchronous part is POSIX compatible (under UNIX/Linux).
+**1. High portability:** the whole code conforms to ANSI C 89/90 Standard. Multithreading/asynchronous part is POSIX compatible (under UNIX/Linux).
 
-**2. Very little dependencies:** basically *mdz_unicode* functions are only dependend on standard C-library memory-management/access functions. Multithreading part is dependend on POSIX *pthreads* API (under UNIX/Linux) and old process control/synchronization API (from Windows 2000). It means you can use library in your code withouth any further dependencies except standard plattform libraries/APIs.
+**2. Little dependencies:** basically *mdz_unicode* functions are only dependend on standard C-library memory-management/access functions. Multithreading part is dependend on POSIX *pthreads* API (under UNIX/Linux) and old process control/synchronization API (from Windows 2000). It means you can use library in your code withouth any further dependencies except standard plattform libraries/APIs.
 
 **3. Extended error-checking:** all functions preserve internal error-code pointing the problem. It is possible to use strict error-checking (when all preserved error-codes should be *MDZ_ERROR_NONE*) or "relaxed"-checking - when only returned *mdz_false* will indicate error.
 
@@ -51,15 +51,17 @@ Only shared/dynamically loaded libraries (*.so* and *.dll* files with import lib
 
 **5. Attached usage:** strings should not necessarily use dynamically-allocated memory - which may be not available on your embedded system (or if malloc()/free() are forbidden to use in your safety-critical software). Just attach container/data to your statically-allocated memory and use all strings functionality.
 
-**6. Unicode support:** UTF-8, UTF-16, UTF-32 are supported.
+**6. Cache-friendly:** it is possible to keep controlling and data parts together in memory using "embedded part".
 
-**7. wchar_t support:** also wchar_t strings are supported, with 2 and 4 bytes-large *wchar_t* characters.
+**7. Unicode support:** UTF-8, UTF-16, UTF-32 are supported.
 
-**8. Endianness-aware containers:** utf16 and utf32 containers are endiannes-aware thus may be used to produce and manipulate strings with pre-defined endianness even if endianness of host differs.
+**8. wchar_t support:** also wchar_t strings are supported, with 2 and 4 bytes-large *wchar_t* characters.
 
-**9. Unicode "surrogate-pairs" awareness:** 2-byte Unicode strings correctly process/distinguish "surrogate-pairs" as 1 Unicode symbol.
+**9. Endianness-aware containers:** utf16 and utf32 containers are endiannes-aware thus may be used to produce and manipulate strings with pre-defined endianness even if endianness of host differs.
 
-**10. Asynchronous execution:** *insert* functions can be executed asynchronously
+**10. Unicode "surrogate-pairs" awareness:** 2-byte Unicode strings correctly process/distinguish "surrogate-pairs" as 1 Unicode symbol.
+
+**11. Asynchronous execution:** *insert* functions can be executed asynchronously
 
 ## mdz_unicode Usage
 
