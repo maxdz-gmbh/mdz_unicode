@@ -1,4 +1,8 @@
-01.02.2020 (mon): Release 0.0.1
+01.03.2021 (mon): Release 0.2
+-----------------------------
+- correction in "attach" functions
+
+01.02.2020 (mon): Release 0.1
 -------------------------------
 Added functions:
 - mdz_unicode_init

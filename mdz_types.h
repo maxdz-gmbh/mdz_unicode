@@ -263,14 +263,14 @@ enum mdz_error_code
   MDZ_ERROR_ENDIANNESS = 15,
 
   /**
-   * Invalid attach typpe
+   * Invalid attach type
    */
-  MDZ_ERROR_ATTACHTYPE = 16,
+  MDZ_ERROR_ATTACH_TYPE = 16,
 
   /**
    * Invalid find method
    */
-  MDZ_ERROR_FINDMETHOD = 17,
+  MDZ_ERROR_FIND_METHOD = 17,
 
   /**
    * Memory allocation for thread error
@@ -285,7 +285,12 @@ enum mdz_error_code
   /**
   * Invalid "source string" parameter
   */
-  MDZ_ERROR_SOURCE = 20
+  MDZ_ERROR_SOURCE = 20,
+
+  /**
+  * Invalid attach terminator
+  */
+  MDZ_ERROR_ATTACH_TERMINATOR = 21
 };
 
 /**

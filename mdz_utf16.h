@@ -88,12 +88,12 @@ void mdz_utf16_clear(struct mdz_Utf16* pUtf16);
  * \param pData - pointer to pre-allocated data to attach
  * \param nOffsetFromStart - position in pre-allocated data to attach from. Can be > 0
  * \param nCapacity - full capacity pre-allocated data in items
- * \param enAttachType - type of attachment. Only MDZ_ATTACH_ZEROSIZE and MDZ_ATTACH_SIZE_TERMINATOR are allowed
+ * \param enAttachType - type of attachment. 0 is expected at position pData[nOffsetFromStart] if MDZ_ATTACH_ZEROSIZE. 0 is expected at position pData[nCapacity] if MDZ_ATTACH_SIZE_TERMINATOR. MDZ_ATTACH_SIZE_NO_TERMINATOR is not allowed
  * \param enEndianness - endianness of UTF-16 characters in pData. Can be MDZ_ENDIAN_LITTLE for "little-endian" or MDZ_ENDIAN_BIG for "big-endian"
  * \return:
  * mdz_false - if pUtf16 == NULL
- * mdz_false - if test-license is used and nCapacity > 1200 (MDZ_ERROR_TEST_CAPACITY)
  * mdz_false - if pData == NULL (MDZ_ERROR_DATA), or nOffsetFromStart >= nCapacity (MDZ_ERROR_OFFSET), or invalid enAttachType (MDZ_ERROR_ATTACHTYPE), or invalid pData endianness (MDZ_ERROR_ENDIANNESS)
+ * mdz_false - if enAttachType is MDZ_ATTACH_ZEROSIZE or MDZ_ATTACH_SIZE_TERMINATOR but 0 is not found at expected position (MDZ_ERROR_ATTACH_TERMINATOR)
  * mdz_false - if enAttachType == MDZ_ATTACH_SIZE_TERMINATOR and pData contains invalid UTF-16 characters (MDZ_ERROR_CONTENT)
  * mdz_true  - operation succeeded
  */
@@ -112,7 +112,6 @@ mdz_bool mdz_utf16_attachData(struct mdz_Utf16* pUtf16, uint16_t* pData, size_t 
  * \return:
  * mdz_false - if pUtf16 == NULL
  * mdz_false - if memory allocation failed (MDZ_ERROR_ALLOCATION)
- * mdz_false - if test-license is used and nNewCapacity > 1200 (MDZ_ERROR_TEST_CAPACITY)
  * mdz_true	 - reservation succeeded, or nNewCapacity <= Capacity (MDZ_ERROR_CAPACITY)
  */
 mdz_bool mdz_utf16_reserve(struct mdz_Utf16* pUtf16, size_t nNewCapacity);
