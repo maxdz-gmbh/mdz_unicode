@@ -1,3 +1,13 @@
+05.03.2021 (fri): Release 0.3
+-----------------------------
+- fixed handling of 4-byte wchar_t items in:
+mdz_utf16_insertWchar_async
+mdz_utf32_insertWchar_async
+mdz_utf8_insertWchar_async
+mdz_wchar_insertWchar_async
+
+- added mdz_wchar_sizeof()
+
 01.03.2021 (mon): Release 0.2
 -----------------------------
 - correction in "attach" functions

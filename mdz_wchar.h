@@ -138,6 +138,15 @@ size_t mdz_wchar_size(const struct mdz_Wchar* pWchar);
 size_t mdz_wchar_length(const struct mdz_Wchar* pWchar);
 
 /**
+ * Return sizeof(wchar_t) of string in bytes.
+ * \param pWchar - pointer to string returned by mdz_wchar_create() or mdz_wchar_create_attached()
+ * \return:
+ * SIZE_MAX - if pWchar == NULL
+ * sizeof(wchar_t) in bytes - otherwise
+ */
+size_t mdz_wchar_sizeof(const struct mdz_Wchar* pWchar);
+
+/**
  * Return string OffsetFromStart in "wide"-characters.
  * \param pWchar - pointer to string returned by mdz_wchar_create() or mdz_wchar_create_attached()
  * \return:
@@ -175,23 +184,25 @@ size_t mdz_wchar_embedSize(const struct mdz_Wchar* pWchar);
  * \param nLeftPos - 0-based position to insert in symbols. "surrogate pairs" count as 1 symbol. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pwcItems - "wide"-characters to insert
  * \param nCount - number of "wide"-characters to insert
+ * \param nWcharSize - size of pwcItems wchar_t character in bytes
  * \param bReserve - if mdz_true reserve capacity when there is not enough space for insertion, otherwise mdz_false
  * \param pAsyncData - pointer to shared async data for asynchronous call, or NULL if call should be synchronous
  * \return:
  * mdz_false - if pWchar == NULL
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
+ * mdz_false - if nWcharSize is not 2 or 4 (MDZ_ERROR_WCHAR_SIZE)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_wchar_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pwcItems contain invalid "wide"-character(s) (MDZ_ERROR_CONTENT)
  * mdz_true  - if pwcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_wchar_insertWchar_async(struct mdz_Wchar* pWchar, size_t nLeftPos, const wchar_t* pwcItems, size_t nCount, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_wchar_insertWchar_async(struct mdz_Wchar* pWchar, size_t nLeftPos, const wchar_t* pwcItems, size_t nCount, size_t nWcharSize, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
  */
-#define mdz_wchar_insertWchar(pWchar, nLeftPos, pwcItems, nCount, bReserve) mdz_wchar_insertWchar_async(pWchar, nLeftPos, pwcItems, nCount, bReserve, NULL)
+#define mdz_wchar_insertWchar(pWchar, nLeftPos, pwcItems, nCount, nWcharSize, bReserve) mdz_wchar_insertWchar_async(pWchar, nLeftPos, pwcItems, nCount, nWcharSize, bReserve, NULL)
 
 /**
  * Insert "wide"-characters string pWcharSource in string. Size grows on nCount. Length grows on symbols count.

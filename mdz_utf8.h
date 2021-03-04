@@ -268,23 +268,25 @@ mdz_bool mdz_utf8_insertAnsi_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPo
  * \param nLeftPos - 0-based position to insert in symbols. "surrogate pairs" count as 1 symbol. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pwcItems - "wide"-characters to insert
  * \param nCount - number of "wide"-characters to insert or 0 if characters until 0-terminator should be used
+ * \param nWcharSize - size of pwcItems wchar_t character in bytes
  * \param bReserve - if mdz_true reserve capacity when there is not enough space for insertion, otherwise mdz_false
  * \param pAsyncData - pointer to shared async data for asynchronous call, or NULL if call should be synchronous
  * \return:
  * mdz_false - if pUtf8 == NULL
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
+ * mdz_false - if nWcharSize is not 2 or 4 (MDZ_ERROR_WCHAR_SIZE)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pwcItems contain invalid "wide"-character(s) (MDZ_ERROR_CONTENT)
  * mdz_true  - if pwcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf8_insertWchar_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const wchar_t* pwcItems, size_t nCount, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf8_insertWchar_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const wchar_t* pwcItems, size_t nCount, size_t nWcharSize, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
  */
-#define mdz_utf8_insertWchar(pUtf8, nLeftPos, pwcItems, nCount, bReserve) mdz_utf8_insertWchar_async(pUtf8, nLeftPos, pwcItems, nCount, bReserve, NULL)
+#define mdz_utf8_insertWchar(pUtf8, nLeftPos, pwcItems, nCount, nWcharSize, bReserve) mdz_utf8_insertWchar_async(pUtf8, nLeftPos, pwcItems, nCount, nWcharSize, bReserve, NULL)
 
 /**
  * Insert "wide"-characters string pWcharSource in string. Characters are converted to UTF-8 characters before isertion. Size grows on added bytes. Length grows on symbols count.

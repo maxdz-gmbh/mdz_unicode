@@ -290,7 +290,12 @@ enum mdz_error_code
   /**
   * Invalid attach terminator
   */
-  MDZ_ERROR_ATTACH_TERMINATOR = 21
+  MDZ_ERROR_ATTACH_TERMINATOR = 21,
+
+  /**
+   * Invalid wchar_t size (expected is 2 or 4 bytes)
+   */
+  MDZ_ERROR_WCHAR_SIZE = 22
 };
 
 /**

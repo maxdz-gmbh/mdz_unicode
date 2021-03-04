@@ -33,7 +33,7 @@ extern "C"
  */
 
 /**
- * Initializes unicode library. This function should be caled before any other function of the library.
+ * Initializes unicode library. This function should be called before any other function of the library.
  * \param pFirstNameHash - user first name hash code
  * \param pLastNameHash - user last name hash code
  * \param pEmailHash - user e-mail hash code
