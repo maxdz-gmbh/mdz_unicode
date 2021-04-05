@@ -1,5 +1,5 @@
 /**
- * \ingroup mdz_string library
+ * \ingroup mdz_unicode library
  *
  * \author maxdz Software GmbH
  *
@@ -20,15 +20,31 @@
  * Endianness of bytes in UTF-32 character - is defined by m_enEndianness and set using enEndianness during string-creation in mdz_utf32_create()
  *
  * \par info
- * See additional info on mdz_string library like version, portability, etc in mdz_string.h
+ * See additional info on mdz_unicode library like version, portability, etc in mdz_unicode.h
  */
 
-#ifndef MDZ_STRING_UTF32_H
-#define MDZ_STRING_UTF32_H
+#ifndef MDZ_UNICODE_UTF32_H
+#define MDZ_UNICODE_UTF32_H
 
 #include "mdz_types.h"
 
 #include <stdint.h>
+
+/**
+ * Handle of UTF-32 string in mdz_unicode library
+ */
+struct mdz_Utf32
+{
+  /**
+   * Pointer to data of string. Do not change it directly.
+   */
+  const uint32_t* m_pData;
+
+  /**
+   * Error code if operation failed or there are some inconsistences.
+   */
+  enum mdz_error m_enErrorCode;
+};
 
 #ifdef __cplusplus
 extern "C" 
@@ -44,7 +60,7 @@ extern "C"
  * \param nEmbedSize - size of "embedded part" of string. There is no "embedded part" if 0
  * \param enEndianness - endianness of string. Should be MDZ_ENDIAN_LITTLE or MDZ_ENDIAN_BIG
  * \return:
- * NULL   - if library is not initialized with mdz_string_init() call
+ * NULL   - if library is not initialized with mdz_unicode_init() call
  * NULL   - if memory allocation failed
  * NULL   - if invalid enEndianness
  * Result - pointer to string for use in other mdz_utf32 functions
@@ -59,7 +75,7 @@ struct mdz_Utf32* mdz_utf32_create(size_t nEmbedSize, enum mdz_endianness enEndi
  * \param nAreaSizeBytes - size of available memory from pStart in bytes. Should be large enough for internal utf32 structure
  * \param pOutSize - returned actual size of allocated internal utf32 structure in bytes, may be NULL if not needed
  * \return:
- * NULL   - if library is not initialized with mdz_string_init() call
+ * NULL   - if library is not initialized with mdz_unicode_init() call
  * NULL   - if invalid enEndianness
  * NULL   - if pStart == NULL or pSize == NULL
  * NULL   - if size in nSize is smaller than size of internal utf32 structure
@@ -182,6 +198,7 @@ size_t mdz_utf32_embedSize(const struct mdz_Utf32* pUtf32);
 
 /**
  * Insert nCount UTF-32 characters in string. Size grows on nCount. Length grows on symbols count.
+ * String m_pData and pItems should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pItems - UTF-32 characters to insert
@@ -194,6 +211,7 @@ size_t mdz_utf32_embedSize(const struct mdz_Utf32* pUtf32);
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -206,6 +224,7 @@ mdz_bool mdz_utf32_insertUtf32_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, 
 
 /**
  * Insert UTF-32 string pUtf32Source in string. Size grows on nCount. Length grows on symbols count.
+ * String m_pData and pUtf32Source->m_pData should not overlap.
  * This function performs significantly better than mdz_utf32_insertUtf32_async() - because there is no additional validation of inserted string.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
@@ -218,6 +237,7 @@ mdz_bool mdz_utf32_insertUtf32_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, 
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if invalid enEndianness (MDZ_ERROR_ENDIANNESS)
+ * mdz_false - if m_pData and pUtf32Source->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pUtf32Source == NULL (MDZ_ERROR_SOURCE), or pUtf32Source.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -230,6 +250,7 @@ mdz_bool mdz_utf32_insertUtf32_string_async(struct mdz_Utf32* pUtf32, size_t nLe
 
 /**
  * Insert nCount ASCII/ANSI bytes in string. Characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on added symbols count.
+ * String m_pData and pcItems should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pcItems - bytes to insert
@@ -241,6 +262,7 @@ mdz_bool mdz_utf32_insertUtf32_string_async(struct mdz_Utf32* pUtf32, size_t nLe
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pcItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -253,6 +275,7 @@ mdz_bool mdz_utf32_insertAnsi_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, c
 
 /**
  * Insert ASCII/ANSI string pAnsiSource in string. Characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on added symbols count.
+ * String m_pData and pAnsiSource->m_pData should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pAnsiSource - pointer to ASCII/ANSI string to insert. String is returned by mdz_ansi_create() or mdz_ansi_create_attached()
@@ -263,10 +286,11 @@ mdz_bool mdz_utf32_insertAnsi_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, c
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pAnsiSource->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pAnsiSource == NULL (MDZ_ERROR_SOURCE), or pAnsiSource.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf32_insertAnsi_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const struct mdz_Ansi* pAnsiSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf32_insertAnsi_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const void* pAnsiSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
@@ -275,6 +299,7 @@ mdz_bool mdz_utf32_insertAnsi_string_async(struct mdz_Utf32* pUtf32, size_t nLef
 
 /**
  * Insert nCount "wide"-characters in string. Characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on added symbols count.
+ * String m_pData and pwcItems should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pwcItems - "wide"-characters to insert
@@ -288,6 +313,7 @@ mdz_bool mdz_utf32_insertAnsi_string_async(struct mdz_Utf32* pUtf32, size_t nLef
  * mdz_false - if nWcharSize is not 2 or 4 (MDZ_ERROR_WCHAR_SIZE)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pwcItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -300,6 +326,7 @@ mdz_bool mdz_utf32_insertWchar_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, 
 
 /**
  * Insert "wide"-characters string pWcharSource in string. Characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on added symbols count.
+ * String m_pData and pWcharSource->m_pData should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pWcharSource - pointer to "wide"-characters string to insert. String is returned by mdz_wchar_create() or mdz_wchar_create_attached()
@@ -310,10 +337,11 @@ mdz_bool mdz_utf32_insertWchar_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, 
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pWcharSource->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pWcharSource == NULL (MDZ_ERROR_SOURCE), or pWcharSource.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf32_insertWchar_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const struct mdz_Wchar* pWcharSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf32_insertWchar_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const void* pWcharSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
@@ -322,6 +350,7 @@ mdz_bool mdz_utf32_insertWchar_string_async(struct mdz_Utf32* pUtf32, size_t nLe
 
 /**
  * Insert nCount UTF-8 characters in string. UTF-8 characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on added symbols count.
+ * String m_pData and pcItems should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pcItems - UTF-8 characters to insert
@@ -334,6 +363,7 @@ mdz_bool mdz_utf32_insertWchar_string_async(struct mdz_Utf32* pUtf32, size_t nLe
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pcItems contain invalid UTF-8 character(s) (MDZ_ERROR_CONTENT)
+ * mdz_false - if m_pData and pcItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -346,6 +376,7 @@ mdz_bool mdz_utf32_insertUtf8_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, c
 
 /**
  * Insert UTF-8 string pUtf8Source in string. UTF-8 characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on added symbols count.
+ * String m_pData and pUtf8Source->m_pData should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pUtf8Source - pointer to UTF-8 string to insert. String is returned by mdz_utf8_create() or mdz_utf8_create_attached()
@@ -356,10 +387,11 @@ mdz_bool mdz_utf32_insertUtf8_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, c
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pUtf8Source->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pUtf8Source == NULL (MDZ_ERROR_SOURCE), or pUtf8Source.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf32_insertUtf8_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const struct mdz_Utf8* pUtf8Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf32_insertUtf8_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const void* pUtf8Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
@@ -368,6 +400,7 @@ mdz_bool mdz_utf32_insertUtf8_string_async(struct mdz_Utf32* pUtf32, size_t nLef
 
 /**
  * Insert nCount UTF-16 characters in string. Characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on symbols count.
+ * String m_pData and pItems should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pItems - UTF-16 items to insert
@@ -381,6 +414,7 @@ mdz_bool mdz_utf32_insertUtf8_string_async(struct mdz_Utf32* pUtf32, size_t nLef
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pItems contain invalid 2-byte character(s) (MDZ_ERROR_CONTENT), or invalid enEndianness (MDZ_ERROR_ENDIANNESS)
+ * mdz_false - if m_pData and pItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -393,6 +427,7 @@ mdz_bool mdz_utf32_insertUtf16_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, 
 
 /**
  * Insert UTF-16 string pUtf16Source in string. Characters are converted to UTF-32 characters before isertion. Size grows on added UTF-32 characters count. Length grows on symbols count.
+ * String m_pData and pUtf16Source->m_pData should not overlap.
  * \param pUtf32 - pointer to string returned by mdz_utf32_create() or mdz_utf32_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pUtf16Source - pointer to UTF-16 string to insert. String is returned by mdz_utf16_create() or mdz_utf16_create_attached()
@@ -403,10 +438,11 @@ mdz_bool mdz_utf32_insertUtf16_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, 
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf32_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pUtf16Source->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pUtf16Source == NULL (MDZ_ERROR_SOURCE), or pUtf16Source.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf32_insertUtf16_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const struct mdz_Utf16* pUtf16Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf32_insertUtf16_string_async(struct mdz_Utf32* pUtf32, size_t nLeftPos, const void* pUtf16Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version

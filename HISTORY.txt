@@ -1,3 +1,8 @@
+05.04.2021 (mon): Release 0.4
+-----------------------------
+- fixed handling of overlapping data and items
+- minor changes in asynchronous execution
+
 05.03.2021 (fri): Release 0.3
 -----------------------------
 - fixed handling of 4-byte wchar_t items in:

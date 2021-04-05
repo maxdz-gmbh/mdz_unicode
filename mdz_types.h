@@ -25,7 +25,7 @@
 #include <pthread.h>
 #endif
 
- /**
+/**
  * Boolean type of mdz_containers library.
  */
 #define mdz_false 0
@@ -37,28 +37,28 @@ typedef void* HANDLE;
 #endif
 
 /**
-* Shared data for asynchronous calls
-*/
+ * Shared data for asynchronous calls
+ */
 struct mdz_asyncData
 {
   /**
-  * Pointer to string instance
-  */
-  void* m_pString;
+   * Pointer to mdz-container instance
+   */
+  void* m_pContainer;
 
   /**
-  * Result of call. Invalid if call is not completely finished (m_bFinished is mdz_false)
-  */
+   * Result of call. Invalid if call is not completely finished (m_bFinished is mdz_false)
+   */
   size_t m_nResult;
 
   /**
-  * Additional data returned by call (if any). Invalid if call is not completely finished (m_bFinished is mdz_false)
-  */
+   * Additional data returned by call (if any). Invalid if call is not completely finished (m_bFinished is mdz_false)
+   */
   void* m_pData;
 
   /**
-  * Thread on which the call is executed. May be used by client for wait operations
-  */
+   * Thread on which the call is executed. May be used by client for wait operations
+   */
 #ifdef _WIN32
   HANDLE m_hThread;
 #else
@@ -66,13 +66,13 @@ struct mdz_asyncData
 #endif
 
   /**
-  * mdz_true if the call is completely finished. Otherwise mdz_false (if interrupted/cancelled)
-  */
+   * mdz_true if the call is completely finished. Otherwise mdz_false (if interrupted/cancelled)
+   */
   mdz_bool m_bFinished;
 
   /**
-  * Should be set in mdz_true during call execution, to cancel the call. Otherwise mdz_false
-  */
+   * Should be set in mdz_true during call execution, to cancel the call. Otherwise mdz_false
+   */
   mdz_bool m_bCancel;
 };
 
@@ -98,8 +98,8 @@ enum mdz_attach_type
 };
 
 /**
-  * Data endianness
-  */
+ * Data endianness
+ */
 enum mdz_endianness
 {
   /**
@@ -159,7 +159,7 @@ enum mdz_compare_result
  */
 enum mdz_find_method
 {
-  /*
+  /**
    * standard C-library implementation
    */
   MDZ_FIND_CLIB = 0,
@@ -180,7 +180,7 @@ enum mdz_find_method
   MDZ_FIND_MONOTONE = 3
 };
 
-enum mdz_error_code
+enum mdz_error
 {
   /**
    * No error
@@ -283,99 +283,24 @@ enum mdz_error_code
   MDZ_ERROR_THREAD_START = 19,
 
   /**
-  * Invalid "source string" parameter
-  */
+   * Invalid "source string" parameter
+   */
   MDZ_ERROR_SOURCE = 20,
 
   /**
-  * Invalid attach terminator
-  */
+   * Invalid attach terminator
+   */
   MDZ_ERROR_ATTACH_TERMINATOR = 21,
 
   /**
    * Invalid wchar_t size (expected is 2 or 4 bytes)
    */
-  MDZ_ERROR_WCHAR_SIZE = 22
-};
-
-/**
-* Handle of ANSI string in mdz_string library
-*/
-struct mdz_Ansi
-{
-  /**
-  * Pointer to data of string. Do not change it directly.
-  */
-  char* m_pData;
+  MDZ_ERROR_WCHAR_SIZE = 22,
 
   /**
-  * Error code if operation failed or there are some inconsistences.
-  */
-  enum mdz_error_code m_enErrorCode;
-};
-
-/**
-* Handle of utf8 string in mdz_string library
-*/
-struct mdz_Utf8
-{
-  /**
-  * Pointer to data of string. Do not change it directly.
-  */
-  unsigned char* m_pData;
-
-  /**
-  * Error code if operation failed or there are some inconsistences.
-  */
-  enum mdz_error_code m_enErrorCode;
-};
-
-/**
-* Handle of UTF-16 string in mdz_string library
-*/
-struct mdz_Utf16
-{
-  /**
-  * Pointer to data of string. Do not change it directly.
-  */
-  const uint16_t* m_pData;
-
-  /**
-  * Error code if operation failed or there are some inconsistences.
-  */
-  enum mdz_error_code m_enErrorCode;
-};
-
-/**
-* Handle of UTF-32 string in mdz_string library
-*/
-struct mdz_Utf32
-{
-  /**
-  * Pointer to data of string. Do not change it directly.
-  */
-  const uint32_t* m_pData;
-
-  /**
-  * Error code if operation failed or there are some inconsistences.
-  */
-  enum mdz_error_code m_enErrorCode;
-};
-
-/**
-* Handle of "wide"-character string in mdz_string library
-*/
-struct mdz_Wchar
-{
-  /**
-  * Pointer to data of string. Do not change it directly.
-  */
-  const wchar_t* m_pData;
-
-  /**
-  * Error code if operation failed or there are some inconsistences.
-  */
-  enum mdz_error_code m_enErrorCode;
+   * Overlappend areas error
+   */
+  MDZ_ERROR_OVERLAP = 23
 };
 
 #endif

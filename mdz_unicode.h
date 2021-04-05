@@ -12,9 +12,9 @@
 * \par portability
 * Source code of library conforms to ANSI C 89/90 Standard.
 *
-* \version 1.0.0
+* \version 0.4
 *
-* \date 2020-10
+* \date 2021-04
 *
 */
 

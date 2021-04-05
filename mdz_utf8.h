@@ -1,5 +1,5 @@
 /**
- * \ingroup mdz_string library
+ * \ingroup mdz_unicode library
  *
  * \author maxdz Software GmbH
  *
@@ -20,16 +20,32 @@
  *
  * Unicode "combining characters" are not specially-distinguished and counted as a distinct symbols.
  *
- * \par info
- * See additional info on mdz_string library like version, portability, etc in mdz_string.h
+ * \par mdz_unicode
+ * See additional info on mdz_unicode library like version, portability, etc in mdz_unicode.h
  */
 
-#ifndef MDZ_STRING_UTF8_H
-#define MDZ_STRING_UTF8_H
+#ifndef MDZ_UNICODE_UTF8_H
+#define MDZ_UNICODE_UTF8_H
 
 #include "mdz_types.h"
 
 #include <stdint.h>
+
+/**
+ * Handle of utf8 string in mdz_unicode library
+ */
+struct mdz_Utf8
+{
+  /**
+   * Pointer to data of string. Do not change it directly.
+   */
+  unsigned char* m_pData;
+
+  /**
+   * Error code if operation failed or there are some inconsistences.
+   */
+  enum mdz_error m_enErrorCode;
+};
 
 #ifdef __cplusplus
 extern "C" 
@@ -44,7 +60,7 @@ extern "C"
  * Create empty UTF-8 string with Capacity == 1 (for 0-terminator), Size == 0 and Length == 0.
  * \param nEmbedSize - size of "embedded part" of string. There is no "embedded part" if 0
  * \return:
- * NULL   - if library is not initialized with mdz_string_init() call
+ * NULL   - if library is not initialized with mdz_unicode_init() call
  * NULL   - if memory allocation failed
  * Result - pointer to string for use in other mdz_utf8 functions
  */
@@ -57,7 +73,7 @@ struct mdz_Utf8* mdz_utf8_create(size_t nEmbedSize);
  * \param nAreaSizeBytes - size of available memory from pStart in bytes. Should be large enough for internal utf8 structure
  * \param pOutSize - returned actual size of placed  internal utf8 structure in bytes, may be NULL if not needed
  * \return:
- * NULL   - if library is not initialized with mdz_string_init() call
+ * NULL   - if library is not initialized with mdz_unicode_init() call
  * NULL   - if pStart == NULL or pSize == NULL
  * NULL   - if size in nSize is smaller than size of internal utf8 structure
  * Result - pointer to string for use in other mdz_utf8 functions. Normally it equals to pStart
@@ -172,6 +188,7 @@ size_t mdz_utf8_embedSize(const struct mdz_Utf8* pUtf8);
 
 /**
  * Insert nCount UTF-8 bytes in string. Size grows on nCount. Length grows on symbols count.
+ * String m_pData and pcItems should not overlap.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pcItems - UTF-8 bytes to insert
@@ -184,6 +201,7 @@ size_t mdz_utf8_embedSize(const struct mdz_Utf8* pUtf8);
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pcItems contain invalid UTF-8 byte(s) (MDZ_ERROR_CONTENT)
+ * mdz_false - if m_pData and pcItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -196,6 +214,7 @@ mdz_bool mdz_utf8_insertUtf8_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, cons
 
 /**
  * Insert UTF-8 string pUtf8Source in string. Size grows on nCount. Length grows on symbols count.
+ * String m_pData and pUtf8Source->m_pData should not overlap.
  * This function performs significantly better than mdz_utf8_insertUtf8_async() - because there is no additional validation of inserted string.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
@@ -207,6 +226,7 @@ mdz_bool mdz_utf8_insertUtf8_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, cons
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pUtf8Source->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pUtf8Source == NULL (MDZ_ERROR_SOURCE), or pUtf8Source.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -219,6 +239,7 @@ mdz_bool mdz_utf8_insertUtf8_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPo
 
 /**
  * Insert nCount ASCII/ANSI bytes in string. Characters are converted to UTF-8 characters before isertion. Size grows on added bytes. Length grows on added symbols count.
+ * String m_pData and pcItems should not overlap.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pcItems - bytes to insert
@@ -230,6 +251,7 @@ mdz_bool mdz_utf8_insertUtf8_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPo
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pcItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -242,6 +264,7 @@ mdz_bool mdz_utf8_insertAnsi_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, cons
 
 /**
  * Insert ASCII/ANSI string pAnsiSource in string. Characters are converted to UTF-8 characters before isertion. Size grows on added bytes. Length grows on added symbols count.
+ * String m_pData and pAnsiSource->m_pData should not overlap.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pAnsiSource - pointer to ASCII/ANSI string to insert. String is returned by mdz_ansi_create() or mdz_ansi_create_attached()
@@ -252,18 +275,20 @@ mdz_bool mdz_utf8_insertAnsi_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, cons
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pAnsiSource->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pAnsiSource == NULL (MDZ_ERROR_SOURCE), or pAnsiSource.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf8_insertAnsi_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const struct mdz_Ansi* pAnsiSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf8_insertAnsi_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const void* pAnsiSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
  */
-#define mdz_utf8_insertAnsi_string(pUtf8, nLeftPos, pcItems, nCount, bReserve) mdz_utf8_insertAnsi_string_async(pUtf8, nLeftPos, pcItems, nCount, bReserve, NULL)
+#define mdz_utf8_insertAnsi_string(pUtf8, nLeftPos, pAnsiSource, bReserve) mdz_utf8_insertAnsi_string_async(pUtf8, nLeftPos, pAnsiSource, bReserve, NULL)
 
 /**
  * Insert nCount "wide"-characters in string. Characters are converted to UTF-8 characters before isertion. Size grows on added bytes. Length grows on symbols count.
+ * String m_pData and pwcItems should not overlap.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. "surrogate pairs" count as 1 symbol. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
  * \param pwcItems - "wide"-characters to insert
@@ -278,6 +303,7 @@ mdz_bool mdz_utf8_insertAnsi_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPo
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pwcItems contain invalid "wide"-character(s) (MDZ_ERROR_CONTENT)
+ * mdz_false - if m_pData and pwcItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pwcItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -290,6 +316,7 @@ mdz_bool mdz_utf8_insertWchar_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, con
 
 /**
  * Insert "wide"-characters string pWcharSource in string. Characters are converted to UTF-8 characters before isertion. Size grows on added bytes. Length grows on symbols count.
+ * String m_pData and pWcharSource->m_pData should not overlap.
  * For 2-bytes "wide"-characters - see information concerning Unicode "surrogate pairs"/"combining characters" in description of mdz_utf8_insertUtf16_async().
  * For 4-bytes "wide"-characters - see information concerning Unicode "combining characters" in description of mdz_utf8_insertUtf32_async().
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
@@ -302,10 +329,11 @@ mdz_bool mdz_utf8_insertWchar_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, con
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pWcharSource->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pWcharSource == NULL (MDZ_ERROR_SOURCE), or pWcharSource.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf8_insertWchar_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const struct mdz_Wchar* pWcharSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf8_insertWchar_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const void* pWcharSource, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
@@ -314,6 +342,7 @@ mdz_bool mdz_utf8_insertWchar_string_async(struct mdz_Utf8* pUtf8, size_t nLeftP
 
 /**
  * Insert nCount UTF-16 characters in string. UTF-16 characters are converted to UTF-8 before isertion. Size grows on added bytes. Length grows on symbols count.
+ * String m_pData and pItems should not overlap.
  * UTF-16 "surrogate pairs" are supported and counted as 1 symbol (4 bytes size).
  * UTF-16 "combining characters" are not specially-distinguished and counted as a separate UTF-8 symbol.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
@@ -329,6 +358,7 @@ mdz_bool mdz_utf8_insertWchar_string_async(struct mdz_Utf8* pUtf8, size_t nLeftP
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
  * mdz_false - if pItems contain invalid UTF-16 character(s) (MDZ_ERROR_CONTENT), or invalid enEndianness (MDZ_ERROR_ENDIANNESS)
+ * mdz_false - if m_pData and pItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -341,6 +371,7 @@ mdz_bool mdz_utf8_insertUtf16_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, con
 
 /**
  * Insert UTF-16 string pUtf16Source in string. UTF-16 characters are converted to UTF-8 before isertion. Size grows on added bytes. Length grows on symbols count.
+ * String m_pData and pUtf16Source->m_pData should not overlap.
  * UTF-16 "surrogate pairs" are supported and counted as 1 symbol (4 bytes size).
  * UTF-16 "combining characters" are not specially-distinguished and counted as a separate UTF-8 symbol.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
@@ -353,10 +384,11 @@ mdz_bool mdz_utf8_insertUtf16_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, con
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pUtf16Source->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pUtf16Source == NULL (MDZ_ERROR_SOURCE), or pUtf16Source.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf8_insertUtf16_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const struct mdz_Utf16* pUtf16Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf8_insertUtf16_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const void* pUtf16Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
@@ -365,6 +397,7 @@ mdz_bool mdz_utf8_insertUtf16_string_async(struct mdz_Utf8* pUtf8, size_t nLeftP
 
 /**
  * Insert nCount UTF-32 characters in string. UTF-32 characters are converted to UTF-8 before isertion. Size grows on added bytes. Length grows on symbols count.
+ * String m_pData and pItems should not overlap.
  * Unicode "combining characters" are not specially-distinguished and counted as a separate UTF-8 symbol.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
@@ -378,6 +411,7 @@ mdz_bool mdz_utf8_insertUtf16_string_async(struct mdz_Utf8* pUtf8, size_t nLeftP
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pItems overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pItems == NULL (MDZ_ERROR_ITEMS), or nCount == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
@@ -390,6 +424,7 @@ mdz_bool mdz_utf8_insertUtf32_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, con
 
 /**
  * Insert UTF-32 string pUtf32Source in string. UTF-32 characters are converted to UTF-8 before isertion. Size grows on added bytes. Length grows on symbols count.
+ * String m_pData and pUtf32Source->m_pData should not overlap.
  * Unicode "combining characters" are not specially-distinguished and counted as a separate UTF-8 symbol.
  * \param pUtf8 - pointer to string returned by mdz_utf8_create() or mdz_utf8_create_attached()
  * \param nLeftPos - 0-based position to insert in symbols. If nLeftPos == Length or -1, items are appended. nLeftPos > Length is not allowed
@@ -401,10 +436,11 @@ mdz_bool mdz_utf8_insertUtf32_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, con
  * mdz_false - if bReserve == mdz_true and memory allocation failed (MDZ_ERROR_ALLOCATION)
  * mdz_false - if bReserve == mdz_true and there is not enough capacity for inserted data, but m_pData is attached using mdz_utf8_attachData() (MDZ_ERROR_ATTACHED)
  * mdz_false - if bReserve == mdz_false and there is not enough free Capacity in the string (MDZ_ERROR_CAPACITY)
+ * mdz_false - if m_pData and pUtf32Source->m_pData overlap (MDZ_ERROR_OVERLAP)
  * mdz_true  - if pUtf32Source == NULL (MDZ_ERROR_SOURCE), or pUtf32Source.Size == 0 (MDZ_ERROR_ZEROCOUNT), or nLeftPos > Length (MDZ_ERROR_BIGLEFT). No insertion is made
  * mdz_true  - insertion succeeded
  */
-mdz_bool mdz_utf8_insertUtf32_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const struct mdz_Utf32* pUtf32Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
+mdz_bool mdz_utf8_insertUtf32_string_async(struct mdz_Utf8* pUtf8, size_t nLeftPos, const void* pUtf32Source, mdz_bool bReserve, struct mdz_asyncData* pAsyncData);
 
 /**
  * Synchronous version
