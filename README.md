@@ -1,4 +1,4 @@
-**January 2024 NOTE:** This repo is obsolete. Please use https://github.com/maxdz-gmbh/mdz_string project/repo instead.
+**January 2024 NOTE:** This repo is obsolete. Please use [mdz_string] project/repo instead.
 
 **NOTE:** All 0.x releases are kind of "alpha-versions" without expectations of interface backward-compatibility.
 
@@ -40,6 +40,7 @@ Only shared/dynamically loaded libraries (*.so* and *.dll* files with import lib
 
 [mdz_unicode]: https://github.com/maxdz-gmbh/mdz_unicode
 [maxdz Software GmbH]: https://maxdz.com/
+[mdz_string]: https://github.com/maxdz-gmbh/mdz_string
 
 ## mdz_unicode Advantages
 
