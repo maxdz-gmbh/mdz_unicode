@@ -1,3 +1,5 @@
+**January 2024 NOTE:** This repo is obsolete. Please use https://github.com/maxdz-gmbh/mdz_string project/repo instead.
+
 **NOTE:** All 0.x releases are kind of "alpha-versions" without expectations of interface backward-compatibility.
 
 ## Table of Contents
