@@ -1,6 +1,6 @@
-**January 2024 NOTE:** This repo is obsolete. Please use [mdz_string] project/repo instead.
+**February 2024 NOTE:** This repo is obsolete. Please use [mdz_string] project/repo instead.
 
-**NOTE:** All 0.x releases are kind of "alpha-versions" without expectations of interface backward-compatibility.
+**NOTE:** All 0.x releases are kind of "alpha-versions" without expectations of API backward-compatibility.
 
 ## Table of Contents
 [mdz_unicode Overview](#mdz_unicode-Overview)<br>
